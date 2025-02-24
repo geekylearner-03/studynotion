@@ -41,9 +41,15 @@ function App() {
   const { user } = useSelector((state) => state.profile)
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      const token = JSON.parse(localStorage.getItem("token"))
-      dispatch(getUserDetails(token, navigate))
+    const storedToken = localStorage.getItem("token")
+    if (storedToken) {
+      try {
+        const token = JSON.parse(storedToken)
+        dispatch(getUserDetails(token, navigate))
+      } catch (error) {
+        console.error("Invalid token format in localStorage")
+        // Handle the error appropriately
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

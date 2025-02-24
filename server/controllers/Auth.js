@@ -1,16 +1,18 @@
 const bcrypt = require("bcrypt")
 const crypto = require("crypto")
 const User = require("../models/User")
+const dotenv = require("dotenv")
 const OTP = require("../models/OTP")
 const jwt = require("jsonwebtoken")
 const otpGenerator = require("otp-generator")
 const mailSender = require("../utils/mailSender")
 const { passwordUpdated } = require("../mail/templates/passwordUpdate")
 const Profile = require("../models/Profile")
-require("dotenv").config()
+// require("dotenv").config()
+dotenv.config();
 
 // Signup Controller for Registering USers
-secretKey = crypto.randomBytes(32).toString('hex');
+// secretKey = crypto.randomBytes(32).toString('hex');
 //console.log(secretKey);
 
 exports.signup = async (req, res) => {
@@ -146,7 +148,7 @@ exports.login = async (req, res) => {
     if (await bcrypt.compare(password, user.password)) {
       const token = jwt.sign(
         { email: user.email, id: user._id, role: user.role },
-        secretKey,
+        process.env.JWT_SECRET,
         {
           expiresIn: "24h",
         }

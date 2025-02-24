@@ -34,30 +34,36 @@ export default function CourseInformationForm() {
 
   useEffect(() => {
     const getCategories = async () => {
-      setLoading(true)
-      const categories = await fetchCourseCategories()
-      if (categories.length > 0) {
-        // console.log("categories", categories)
-        setCourseCategories(categories)
+      setLoading(true);
+      try {
+        const categories = await fetchCourseCategories();
+        if (categories.length > 0) {
+          setCourseCategories(categories);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false)
-    }
-    // if form is in edit mode
+    };
+  
+    // Check for edit course data
     if (editCourse) {
-      // console.log("data populated", editCourse)
-      setValue("courseTitle", course.courseName)
-      setValue("courseShortDesc", course.courseDescription)
-      setValue("coursePrice", course.price)
-      setValue("courseTags", course.tag)
-      setValue("courseBenefits", course.whatYouWillLearn)
-      setValue("courseCategory", course.category)
-      setValue("courseRequirements", course.instructions)
-      setValue("courseImage", course.thumbnail)
+      setValue("courseTitle", course.courseName);
+      setValue("courseShortDesc", course.courseDescription);
+      setValue("coursePrice", course.price);
+      setValue("courseTags", course.tag);
+      setValue("courseBenefits", course.whatYouWillLearn);
+      setValue("courseCategory", course.category);
+      setValue("courseRequirements", course.instructions);
+      setValue("courseImage", course.thumbnail);
     }
-    getCategories()
-
+  
+    // Call getCategories
+    getCategories();
+  
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const isFormUpdated = () => {
     const currentValues = getValues()
@@ -235,8 +241,8 @@ export default function CourseInformationForm() {
             Choose a Category
           </option>
           {!loading &&
-            courseCategories?.map((category, indx) => (
-              <option key={indx} value={category?._id}>
+            courseCategories?.map((category, index) => (
+              <option key={index} value={category?._id}>
                 {category?.name}
               </option>
             ))}

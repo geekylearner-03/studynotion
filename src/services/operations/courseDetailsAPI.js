@@ -67,20 +67,34 @@ export const fetchCourseDetails = async (courseId) => {
 
 // fetching the available course categories
 export const fetchCourseCategories = async () => {
-  let result = []
   try {
-    const response = await apiConnector("GET", COURSE_CATEGORIES_API)
-    console.log("COURSE_CATEGORIES_API API RESPONSE............", response)
+    console.log("Making API call to:", COURSE_CATEGORIES_API);
+    const response = await apiConnector("GET", COURSE_CATEGORIES_API);
+    console.log("Raw API response:", response);
+
     if (!response?.data?.success) {
-      throw new Error("Could Not Fetch Course Categories")
+      throw new Error("Could Not Fetch Course Categories");
     }
-    result = response?.data?.data
+
+    const categories = response?.data?.data;
+    console.log("Parsed categories:", categories);
+
+    if (!categories || !Array.isArray(categories)) {
+      throw new Error("Invalid categories data received");
+    }
+
+    return categories;
+
   } catch (error) {
-    console.log("COURSE_CATEGORY_API API ERROR............", error)
-    toast.error(error.message)
+    console.log("Error details:", {
+      message: error.message,
+      stack: error.stack,
+      response: error.response
+    });
+    toast.error(error.message);
+    return [];
   }
-  return result
-}
+};
 
 // add the course details
 export const addCourseDetails = async (data, token) => {
